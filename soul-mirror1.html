@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soul Mirror Session — Nystro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#0a0906;--deep:#111009;--bone:#f5f0e8;--warm-white:#faf7f2;
+  --gold:#c9a96e;--smoke:#8a8680;--ink:#0f0e0c;
+  --text-body:rgba(245,240,232,0.72);--text-dim:rgba(245,240,232,0.38);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--void);color:var(--bone);font-family:'Jost',sans-serif;font-weight:300;line-height:1.75;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:0.028;pointer-events:none;z-index:1000;}
+.particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.particle{position:absolute;width:1px;height:1px;background:var(--gold);border-radius:50%;animation:drift linear infinite;opacity:0;}
+@keyframes drift{0%{opacity:0;transform:translateY(100vh) translateX(0);}10%{opacity:0.5;}90%{opacity:0.15;}100%{opacity:0;transform:translateY(-20px) translateX(var(--dx));}}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.5rem 3rem;display:flex;justify-content:space-between;align-items:center;background:rgba(10,9,6,0.88);backdrop-filter:blur(20px);border-bottom:1px solid rgba(201,169,110,0.07);}
+@media(max-width:600px){nav{padding:1.25rem 1.5rem;}}
+.nav-brand{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;letter-spacing:.25em;color:var(--bone);text-decoration:none;text-transform:uppercase;opacity:.8;transition:opacity .3s;}
+.nav-brand:hover{opacity:1;}
+.nav-link{font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;color:var(--smoke);text-decoration:none;transition:color .3s;}
+.nav-link:hover{color:var(--gold);}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:10rem 2rem 6rem;position:relative;overflow:hidden;}
+.hero-glow{position:absolute;top:0;left:50%;transform:translateX(-50%);width:700px;height:600px;background:radial-gradient(ellipse,rgba(201,169,110,0.06) 0%,transparent 70%);pointer-events:none;}
+.hero-eyebrow{font-size:.62rem;letter-spacing:.5em;text-transform:uppercase;color:var(--gold);margin-bottom:2.5rem;opacity:0;animation:emerge 1.4s cubic-bezier(.16,1,.3,1) .3s forwards;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-weight:300;line-height:.95;letter-spacing:-.02em;margin-bottom:3rem;opacity:0;animation:emerge 1.4s cubic-bezier(.16,1,.3,1) .6s forwards;}
+.word-soul{display:block;font-size:clamp(5rem,14vw,11rem);color:var(--bone);}
+.word-mirror{display:block;font-size:clamp(4.5rem,13vw,10rem);font-style:italic;color:var(--gold);margin-top:-.1em;}
+.hero-line{width:1px;height:80px;background:linear-gradient(to bottom,var(--gold),transparent);margin:0 auto 3rem;opacity:0;animation:emerge 1s ease 1s forwards;}
+.hero-tagline{font-family:'Cormorant Garamond',serif;font-size:clamp(1rem,2.5vw,1.35rem);font-style:italic;font-weight:300;color:var(--text-body);letter-spacing:.04em;max-width:520px;line-height:1.6;opacity:0;animation:emerge 1s ease 1.2s forwards;}
+.hero-truth{margin-top:3rem;font-size:.62rem;letter-spacing:.45em;text-transform:uppercase;color:var(--gold);opacity:0;animation:emerge 1s ease 1.5s forwards;}
+.hero-cta{margin-top:3.5rem;opacity:0;animation:emerge 1s ease 1.8s forwards;}
+.hero-cta a{display:inline-block;padding:.9rem 2.5rem;border:1px solid rgba(201,169,110,0.3);color:var(--gold);font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;text-decoration:none;transition:all .3s;}
+.hero-cta a:hover{background:rgba(201,169,110,0.06);border-color:var(--gold);}
+.section{position:relative;z-index:1;}
+.container{max-width:860px;margin:0 auto;padding:0 2rem;}
+.lbl{font-size:.6rem;letter-spacing:.5em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:1.2rem;margin-bottom:2.5rem;}
+.lbl::after{content:'';height:1px;width:50px;background:linear-gradient(to right,rgba(201,169,110,.4),transparent);}
+.lbl-c{justify-content:center;}
+.lbl-c::before,.lbl-c::after{content:'';height:1px;flex:1;max-width:60px;background:linear-gradient(to right,transparent,rgba(201,169,110,.3),transparent);}
+.sec-head{font-family:'Cormorant Garamond',serif;font-size:clamp(2.5rem,5.5vw,4rem);font-weight:300;line-height:1.05;color:var(--bone);margin-bottom:2rem;}
+.sec-head em{font-style:italic;color:var(--gold);display:block;}
+.what-sec{padding:8rem 0;border-top:1px solid rgba(201,169,110,0.06);}
+.what-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:6rem;align-items:start;}
+@media(max-width:768px){.what-grid{grid-template-columns:1fr;gap:3rem;}}
+.body-text p{font-size:1rem;font-weight:300;color:var(--text-body);line-height:1.9;margin-bottom:1.5rem;}
+.quote-sec{padding:8rem 2rem;text-align:center;background:linear-gradient(to bottom,var(--void),var(--deep) 50%,var(--void));}
+.q-mark{font-family:'Cormorant Garamond',serif;font-size:10rem;line-height:.4;color:rgba(201,169,110,0.07);display:block;margin-bottom:2rem;user-select:none;}
+.q-main{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,4vw,2.8rem);font-style:italic;font-weight:300;color:var(--bone);max-width:780px;margin:0 auto 2.5rem;line-height:1.45;}
+.q-main strong{color:var(--gold);font-weight:400;}
+.q-attr{font-size:.62rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);}
+.four-sec{padding:8rem 0;}
+.four-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0;margin-top:4rem;border:1px solid rgba(201,169,110,0.08);}
+@media(max-width:600px){.four-grid{grid-template-columns:1fr;}}
+.pillar{padding:3.5rem;border-right:1px solid rgba(201,169,110,0.08);border-bottom:1px solid rgba(201,169,110,0.08);transition:background .4s;}
+.pillar:nth-child(even){border-right:none;}
+.pillar:nth-child(3),.pillar:nth-child(4){border-bottom:none;}
+.pillar:hover{background:rgba(201,169,110,0.03);}
+@media(max-width:600px){.pillar{border-right:none;padding:2.5rem 2rem;}.pillar:nth-child(3){border-bottom:1px solid rgba(201,169,110,0.08);}}
+.p-num{font-family:'Cormorant Garamond',serif;font-size:5rem;font-weight:300;color:rgba(201,169,110,0.08);line-height:1;margin-bottom:1.5rem;transition:color .4s;}
+.pillar:hover .p-num{color:rgba(201,169,110,0.15);}
+.p-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:400;color:var(--bone);margin-bottom:1rem;}
+.p-desc{font-size:.9rem;font-weight:300;color:var(--text-body);line-height:1.85;}
+.for-sec{padding:7rem 0;background:var(--warm-white);}
+.for-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;}
+@media(max-width:768px){.for-grid{grid-template-columns:1fr;gap:3rem;}}
+.for-head{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4.5vw,3.2rem);font-weight:300;line-height:1.1;color:var(--ink);margin-bottom:2rem;}
+.for-head em{font-style:italic;color:#8a6c2e;}
+.for-list{list-style:none;}
+.for-list li{font-size:.9rem;font-weight:300;color:#3a3530;padding:.9rem 0;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;gap:1rem;align-items:flex-start;line-height:1.7;}
+.for-list li::before{content:'—';color:#8a6c2e;flex-shrink:0;margin-top:.05rem;}
+.not-list li{color:#6a6560;}
+.not-list li::before{color:#b0a898;}
+.safety{margin-top:2rem;padding:1.5rem;border-left:2px solid rgba(138,108,46,0.3);background:rgba(138,108,46,0.04);}
+.safety p{font-size:.8rem;font-weight:300;color:#6a6560;line-height:1.7;}
+.safety strong{color:#4a4540;font-weight:400;}
+.for-lbl{font-size:.6rem;letter-spacing:.5em;text-transform:uppercase;color:#8a6c2e;margin-bottom:2rem;display:flex;align-items:center;gap:1rem;}
+.for-lbl::after{content:'';height:1px;width:40px;background:linear-gradient(to right,rgba(138,108,46,.4),transparent);}
+.detail-sec{padding:8rem 0;background:var(--deep);}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:6rem;}
+@media(max-width:768px){.detail-grid{grid-template-columns:1fr;gap:4rem;}}
+.d-blk{margin-bottom:2.5rem;}
+.d-lbl{font-size:.58rem;letter-spacing:.45em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;}
+.d-val{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:var(--bone);line-height:1.3;}
+.d-note{font-size:.82rem;font-weight:300;color:var(--text-dim);line-height:1.8;margin-top:.4rem;}
+.prep-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-style:italic;font-weight:300;color:var(--gold);margin-bottom:1.5rem;}
+.prep-list{list-style:none;}
+.prep-list li{font-size:.85rem;font-weight:300;color:var(--text-body);padding:.65rem 0;border-bottom:1px solid rgba(201,169,110,0.07);display:flex;align-items:center;gap:.8rem;line-height:1.6;}
+.prep-list li::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--gold);flex-shrink:0;opacity:.5;}
+.truth-banner{padding:6rem 2rem;text-align:center;border-top:1px solid rgba(201,169,110,0.06);border-bottom:1px solid rgba(201,169,110,0.06);}
+.truth-words{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:300;color:var(--bone);letter-spacing:.08em;line-height:1.6;}
+.truth-words span{color:var(--gold);font-style:italic;}
+
+/* ══ BOOKING ══ */
+.booking-sec{padding:8rem 0;position:relative;overflow:hidden;}
+.booking-sec::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(201,169,110,0.05) 0%,transparent 70%);pointer-events:none;}
+.booking-inner{max-width:760px;margin:0 auto;padding:0 2rem;text-align:center;}
+.price-wrap{margin:2rem 0 .5rem;}
+.price-sym{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--gold);vertical-align:super;line-height:1;}
+.price-num{font-family:'Cormorant Garamond',serif;font-size:clamp(4.5rem,12vw,8rem);font-weight:300;color:var(--bone);line-height:.9;}
+.price-per{font-size:.65rem;letter-spacing:.4em;text-transform:uppercase;color:var(--smoke);margin-bottom:2rem;}
+.booking-note{font-size:.9rem;font-weight:300;color:var(--text-body);line-height:1.85;margin-bottom:2.5rem;max-width:520px;margin-left:auto;margin-right:auto;}
+.avail-badge{display:inline-flex;align-items:center;gap:.6rem;padding:.5rem 1.2rem;margin-bottom:3rem;border:1px solid rgba(201,169,110,0.2);font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);}
+.avail-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s ease infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.pre-q{background:rgba(201,169,110,0.04);border:1px solid rgba(201,169,110,0.12);padding:3rem;margin-bottom:2.5rem;text-align:left;position:relative;}
+.pre-q::before{content:'';position:absolute;top:0;left:0;width:2px;height:100%;background:linear-gradient(to bottom,var(--gold),transparent);}
+.pre-q-lbl{font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;}
+.pre-q-text{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-style:italic;font-weight:300;color:var(--bone);line-height:1.5;margin-bottom:1rem;}
+.pre-q-sub{font-size:.78rem;font-weight:300;color:var(--text-dim);line-height:1.7;margin-bottom:1.5rem;}
+.q-input{width:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(201,169,110,0.15);padding:1rem 1.2rem;color:var(--bone);font-family:'Jost',sans-serif;font-size:.9rem;font-weight:300;line-height:1.6;resize:vertical;min-height:90px;outline:none;transition:border-color .3s;}
+.q-input:focus{border-color:rgba(201,169,110,0.35);}
+.q-input::placeholder{color:rgba(138,134,128,0.4);}
+.cont-btn-wrap{margin-top:1.2rem;display:flex;justify-content:flex-end;}
+.cont-btn{background:transparent;border:1px solid rgba(201,169,110,0.3);color:var(--gold);font-family:'Jost',sans-serif;font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;padding:.8rem 2rem;cursor:pointer;transition:all .3s;}
+.cont-btn:hover{background:rgba(201,169,110,0.08);border-color:var(--gold);}
+.cal-wrap{display:none;text-align:left;margin-bottom:2.5rem;}
+.cal-wrap.open{display:block;animation:fadeUp .5s ease forwards;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.cal-lbl{font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);margin-bottom:2rem;}
+.month-block{margin-bottom:3.5rem;}
+.month-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--bone);margin-bottom:2rem;padding-bottom:.8rem;border-bottom:1px solid rgba(201,169,110,0.1);}
+.week-block{margin-bottom:2.5rem;}
+.week-label{font-size:.56rem;letter-spacing:.35em;text-transform:uppercase;color:var(--text-dim);margin-bottom:1rem;}
+.day-block{margin-bottom:1.2rem;}
+.day-name{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--smoke);margin-bottom:.7rem;}
+.slots-row{display:flex;flex-wrap:wrap;gap:.6rem;}
+.slot{padding:.65rem 1.3rem;border:1px solid rgba(201,169,110,0.2);background:transparent;color:var(--bone);font-family:'Jost',sans-serif;font-size:.78rem;font-weight:300;letter-spacing:.08em;cursor:pointer;transition:all .3s;position:relative;}
+.slot:hover{background:rgba(201,169,110,0.08);border-color:var(--gold);color:var(--gold);}
+.slot.selected{background:var(--gold);border-color:var(--gold);color:var(--void);font-weight:400;}
+.slot.taken{border-color:rgba(138,134,128,0.12);color:rgba(138,134,128,0.25);cursor:not-allowed;text-decoration:line-through;text-decoration-color:rgba(138,134,128,0.2);}
+.slot.taken:hover{background:transparent;border-color:rgba(138,134,128,0.12);color:rgba(138,134,128,0.25);}
+.slot.taken::after{content:'taken';position:absolute;top:-9px;right:-2px;font-size:.48rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(138,134,128,0.45);background:var(--void);padding:0 .3rem;}
+.sel-summary{display:none;margin-top:2rem;padding:1.5rem 2rem;background:rgba(201,169,110,0.06);border:1px solid rgba(201,169,110,0.15);border-left:2px solid var(--gold);text-align:left;}
+.sel-summary.show{display:block;}
+.ss-lbl{font-size:.58rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;}
+.ss-val{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:300;color:var(--bone);}
+.book-btn{display:none;width:100%;padding:1.3rem;background:var(--gold);border:none;color:var(--void);font-family:'Jost',sans-serif;font-size:.75rem;font-weight:400;letter-spacing:.35em;text-transform:uppercase;cursor:pointer;transition:background .3s;margin-top:1.5rem;text-decoration:none;text-align:center;}
+.book-btn:hover{background:#d4b47a;}
+.book-btn.show{display:block;}
+.or-div{display:flex;align-items:center;gap:1.5rem;margin:2rem 0;color:var(--text-dim);font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;}
+.or-div::before,.or-div::after{content:'';flex:1;height:1px;background:rgba(201,169,110,0.08);}
+.wa-btn{display:block;width:100%;padding:1rem;background:transparent;border:1px solid rgba(201,169,110,0.15);color:var(--smoke);font-family:'Jost',sans-serif;font-size:.68rem;font-weight:300;letter-spacing:.3em;text-transform:uppercase;text-decoration:none;text-align:center;transition:all .3s;}
+.wa-btn:hover{border-color:rgba(201,169,110,0.3);color:var(--gold);}
+
+/* WHAT HAPPENS NEXT */
+.next-sec{padding:7rem 0;background:var(--deep);}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:3rem;margin-top:4rem;}
+@media(max-width:600px){.steps{grid-template-columns:1fr;gap:2.5rem;}}
+.step{text-align:center;position:relative;}
+.step:not(:last-child)::after{content:'';position:absolute;top:1.4rem;right:-1.5rem;width:3rem;height:1px;background:linear-gradient(to right,rgba(201,169,110,0.25),transparent);}
+@media(max-width:600px){.step:not(:last-child)::after{display:none;}}
+.step-num{font-family:'Cormorant Garamond',serif;font-size:3.5rem;font-weight:300;color:rgba(201,169,110,0.1);line-height:1;margin-bottom:1rem;}
+.step-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:var(--bone);margin-bottom:.8rem;}
+.step-desc{font-size:.82rem;font-weight:300;color:var(--text-body);line-height:1.8;}
+
+/* FAQ */
+.faq-sec{padding:7rem 0;}
+.faq-list{margin-top:3rem;border-top:1px solid rgba(201,169,110,0.08);}
+.faq-item{border-bottom:1px solid rgba(201,169,110,0.08);}
+.faq-q{width:100%;background:transparent;border:none;padding:1.8rem 0;display:flex;justify-content:space-between;align-items:center;font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:300;color:var(--bone);cursor:pointer;text-align:left;gap:1rem;transition:color .3s;}
+.faq-q:hover{color:var(--gold);}
+.faq-icon{font-size:1.2rem;color:var(--gold);flex-shrink:0;transition:transform .3s;font-style:normal;}
+.faq-item.open .faq-icon{transform:rotate(45deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease;}
+.faq-item.open .faq-a{max-height:300px;}
+.faq-a-inner{padding:0 0 1.8rem;font-size:.9rem;font-weight:300;color:var(--text-body);line-height:1.9;}
+
+/* WAVE LINK */
+.wave-sec{padding:5rem 2rem;text-align:center;border-top:1px solid rgba(201,169,110,0.06);}
+.wave-text{font-family:'Cormorant Garamond',serif;font-size:clamp(1.1rem,2.5vw,1.6rem);font-style:italic;font-weight:300;color:var(--text-body);margin-bottom:1.5rem;line-height:1.5;}
+.wave-link{display:inline-block;font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,169,110,0.3);padding-bottom:.2rem;transition:border-color .3s;}
+.wave-link:hover{border-color:var(--gold);}
+footer{padding:3.5rem 2rem;text-align:center;border-top:1px solid rgba(201,169,110,0.06);}
+.footer-brand{font-family:'Cormorant Garamond',serif;font-size:1.1rem;letter-spacing:.3em;text-transform:uppercase;color:var(--smoke);display:block;margin-bottom:1.5rem;}
+.footer-links{display:flex;gap:2.5rem;justify-content:center;flex-wrap:wrap;}
+.footer-links a{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color .3s;}
+.footer-links a:hover{color:var(--gold);}
+@keyframes emerge{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-d1{transition-delay:.12s;}
+.reveal-d2{transition-delay:.24s;}
+</style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<nav>
+  <a href="https://nystro.co.uk" class="nav-brand">Nystro</a>
+  <a href="#book" class="nav-link">Book Session</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-glow"></div>
+  <p class="hero-eyebrow">A Sacred 1:1 with Ny · Birmingham, UK</p>
+  <h1 class="hero-title">
+    <span class="word-soul">Soul</span>
+    <span class="word-mirror">Mirror</span>
+  </h1>
+  <div class="hero-line"></div>
+  <p class="hero-tagline">A space to hear what you already know.<br>To see what you have been carrying.<br>To return to who you are.</p>
+  <p class="hero-truth">Truth &nbsp;·&nbsp; Alignment &nbsp;·&nbsp; Release &nbsp;·&nbsp; Activation</p>
+  <div class="hero-cta"><a href="#book">Book your session — £133</a></div>
+</section>
+
+<section class="section what-sec">
+  <div class="container">
+    <div class="what-grid">
+      <div class="reveal">
+        <p class="lbl">What This Is</p>
+        <h2 class="sec-head">Not therapy.<br><em>Soul work.</em></h2>
+      </div>
+      <div class="reveal reveal-d1">
+        <div class="body-text">
+          <p>A Soul Mirror session is a sacred 1:1 intuitive space held by Ny — a raw plant alchemist and holistic transformation facilitator. Through presence, deep listening, and intuitive energy reading, Ny guides you back to your own inner clarity.</p>
+          <p>What comes up in the session belongs to you. Ny simply holds the mirror steady so you can see yourself clearly — perhaps for the first time in a long time.</p>
+          <p>People arrive feeling stuck, disconnected, or on the edge of something they cannot quite name. They leave with clarity. With lightness. With peace.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section quote-sec">
+  <div class="reveal">
+    <span class="q-mark">"</span>
+    <p class="q-main">One question led them to find peace and <strong>mend relationships</strong> they thought were beyond repair. They got emotional — not because something was wrong. Because something was <strong>finally right.</strong></p>
+    <p class="q-attr">What happens in a Soul Mirror session</p>
+  </div>
+</section>
+
+<section class="section four-sec">
+  <div class="container">
+    <div class="reveal">
+      <p class="lbl">What Opens</p>
+      <h2 class="sec-head" style="font-size:clamp(2rem,4.5vw,3.2rem);">Four things happen<br><em>in every session</em></h2>
+    </div>
+    <div class="four-grid">
+      <div class="pillar reveal"><div class="p-num">01</div><h3 class="p-title">You Are Heard</h3><p class="p-desc">Not fixed. Not analysed. Heard. Fully. The kind of being heard that makes something in you soften and release.</p></div>
+      <div class="pillar reveal reveal-d1"><div class="p-num">02</div><h3 class="p-title">Blocks Surface</h3><p class="p-desc">Emotional and energetic blockages that have been running quietly in the background come into the light — gently, at the pace you can hold.</p></div>
+      <div class="pillar reveal"><div class="p-num">03</div><h3 class="p-title">Release Happens</h3><p class="p-desc">Many people become emotional. Not because something is wrong — because something is finally right. Release is the beginning of peace.</p></div>
+      <div class="pillar reveal reveal-d1"><div class="p-num">04</div><h3 class="p-title">You Realign</h3><p class="p-desc">You leave with clarity about your next step. Not a plan handed to you — a remembrance of your own truth that was always already there.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="section for-sec">
+  <div class="container">
+    <div class="for-grid">
+      <div class="reveal">
+        <p class="for-lbl">Is This For You</p>
+        <h2 class="for-head">This is for you <em>if</em></h2>
+        <ul class="for-list">
+          <li>You feel stuck and cannot see why</li>
+          <li>Something keeps repeating and you are ready for it to stop</li>
+          <li>You are on the edge of a big change and need clarity</li>
+          <li>You have been carrying something heavy for too long</li>
+          <li>You feel disconnected from yourself or your purpose</li>
+          <li>You are ready to shift into your next chapter</li>
+        </ul>
+      </div>
+      <div class="reveal reveal-d1">
+        <p class="for-lbl">Honest Boundaries</p>
+        <h2 class="for-head">This is <em>not</em> for you if</h2>
+        <ul class="for-list not-list">
+          <li>You are looking for clinical therapy or diagnosis</li>
+          <li>You want to be told exactly what to do</li>
+          <li>You are not ready to receive what comes up</li>
+          <li>You need crisis intervention right now</li>
+        </ul>
+        <div class="safety">
+          <p>This is soul work, not medical care. If you are in crisis please contact <strong>Samaritans on 116 123</strong> or speak to your GP. You can also message Ny on WhatsApp directly.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="section detail-sec">
+  <div class="container">
+    <div class="detail-grid">
+      <div class="reveal">
+        <p class="lbl">The Session</p>
+        <div class="d-blk"><p class="d-lbl">Duration</p><p class="d-val">One hour</p></div>
+        <div class="d-blk"><p class="d-lbl">Format</p><p class="d-val">Zoom or Telephone</p><p class="d-note">In-person available in Birmingham for those willing to travel.</p></div>
+        <div class="d-blk"><p class="d-lbl">Facilitated by</p><p class="d-val">Ny — Raw Plant Alchemist<br>Birmingham, UK</p><p class="d-note">200-day juice fast completed. Daily 20–24 hour dry fasting practice. Holistic transformation facilitator operating within the NHS social prescribing system.</p></div>
+      </div>
+      <div class="reveal reveal-d1">
+        <p class="prep-title">How to arrive</p>
+        <ul class="prep-list">
+          <li>Find a quiet space where you will not be disturbed</li>
+          <li>Bring water — the body needs grounding</li>
+          <li>A journal if you want to capture what comes</li>
+          <li>Crystals or anything that helps you feel settled</li>
+          <li>Come with an open heart — not an agenda</li>
+          <li>You do not need to prepare what to say</li>
+          <li>Arrive ready to receive</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section truth-banner">
+  <div class="reveal">
+    <p class="truth-words">This is not therapy. This is <span>soul work.</span><br>Truth. Alignment. <span>Release.</span> Activation.</p>
+  </div>
+</div>
+
+<!-- BOOKING -->
+<section class="section booking-sec" id="book">
+  <div class="booking-inner">
+    <div class="reveal">
+      <p class="lbl lbl-c">Book Your Session</p>
+      <div class="price-wrap"><span class="price-sym">£</span><span class="price-num">133</span></div>
+      <p class="price-per">One hour &nbsp;·&nbsp; Soul Mirror Session with Ny</p>
+      <p class="booking-note">Sessions are limited to 3 per day on weekends only. Choose your slot, answer one question, and secure your place.</p>
+      <div class="avail-badge"><span class="avail-dot"></span>Weekend slots available — April &amp; May 2026</div>
+    </div>
+
+    <div class="pre-q reveal">
+      <p class="pre-q-lbl">Before You Choose Your Slot</p>
+      <p class="pre-q-text">"What is the one thing you most want to shift in this session?"</p>
+      <p class="pre-q-sub">Your answer goes directly to Ny alongside your booking. One honest sentence is enough.</p>
+      <textarea class="q-input" id="shiftQ" placeholder="What feels most alive or most stuck for you right now..." rows="3"></textarea>
+      <div class="cont-btn-wrap"><button class="cont-btn" onclick="openCalendar()">Continue — choose your slot →</button></div>
+    </div>
+
+    <div class="cal-wrap" id="calWrap">
+      <p class="cal-lbl">Choose your session time</p>
+
+      <!-- APRIL -->
+      <div class="month-block">
+        <h3 class="month-title">April 2026</h3>
+
+        <div class="week-block">
+          <p class="week-label">5 &amp; 6 April</p>
+          <div class="day-block">
+            <p class="day-name">Saturday 5 April</p>
+            <div class="slots-row">
+              <button class="slot taken" disabled>9:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Saturday 5 April, 11:00am')">11:00am</button>
+              <button class="slot taken" disabled>1:00pm</button>
+            </div>
+          </div>
+          <div class="day-block" style="margin-top:1.2rem;">
+            <p class="day-name">Sunday 6 April</p>
+            <div class="slots-row">
+              <button class="slot" onclick="selectSlot(this,'Sunday 6 April, 9:00am')">9:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Sunday 6 April, 11:00am')">11:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Sunday 6 April, 1:00pm')">1:00pm</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="week-block">
+          <p class="week-label">12 &amp; 13 April</p>
+          <div class="day-block">
+            <p class="day-name">Saturday 12 April</p>
+            <div class="slots-row">
+              <button class="slot" onclick="selectSlot(this,'Saturday 12 April, 9:00am')">9:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Saturday 12 April, 11:00am')">11:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Saturday 12 April, 1:00pm')">1:00pm</button>
+            </div>
+          </div>
+          <div class="day-block" style="margin-top:1.2rem;">
+            <p class="day-name">Sunday 13 April</p>
+            <div class="slots-row">
+              <button class="slot" onclick="selectSlot(this,'Sunday 13 April, 9:00am')">9:00am</button>
+              <button class="slot taken" disabled>11:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Sunday 13 April, 1:00pm')">1:00pm</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="week-block">
+          <p class="week-label">26 &amp; 27 April</p>
+          <div class="day-block">
+            <p class="day-name">Saturday 26 April</p>
+            <div class="slots-row">
+              <button class="slot" onclick="selectSlot(this,'Saturday 26 April, 9:00am')">9:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Saturday 26 April, 11:00am')">11:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Saturday 26 April, 1:00pm')">1:00pm</button>
+            </div>
+          </div>
+          <div class="day-block" style="margin-top:1.2rem;">
+            <p class="day-name">Sunday 27 April</p>
+            <div class="slots-row">
+              <button class="slot" onclick="selectSlot(this,'Sunday 27 April, 9:00am')">9:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Sunday 27 April, 11:00am')">11:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Sunday 27 April, 1:00pm')">1:00pm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAY -->
+      <div class="month-block">
+        <h3 class="month-title">May 2026</h3>
+
+        <div class="week-block">
+          <p class="week-label">3 &amp; 4 May</p>
+          <div class="day-block">
+            <p class="day-name">Saturday 3 May</p>
+            <div class="slots-row">
+              <button class="slot" onclick="selectSlot(this,'Saturday 3 May, 9:00am')">9:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Saturday 3 May, 11:00am')">11:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Saturday 3 May, 1:00pm')">1:00pm</button>
+            </div>
+          </div>
+          <div class="day-block" style="margin-top:1.2rem;">
+            <p class="day-name">Sunday 4 May</p>
+            <div class="slots-row">
+              <button class="slot" onclick="selectSlot(this,'Sunday 4 May, 9:00am')">9:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Sunday 4 May, 11:00am')">11:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Sunday 4 May, 1:00pm')">1:00pm</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="week-block">
+          <p class="week-label">10 &amp; 11 May</p>
+          <div class="day-block">
+            <p class="day-name">Saturday 10 May</p>
+            <div class="slots-row">
+              <button class="slot" onclick="selectSlot(this,'Saturday 10 May, 9:00am')">9:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Saturday 10 May, 11:00am')">11:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Saturday 10 May, 1:00pm')">1:00pm</button>
+            </div>
+          </div>
+          <div class="day-block" style="margin-top:1.2rem;">
+            <p class="day-name">Sunday 11 May</p>
+            <div class="slots-row">
+              <button class="slot" onclick="selectSlot(this,'Sunday 11 May, 9:00am')">9:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Sunday 11 May, 11:00am')">11:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Sunday 11 May, 1:00pm')">1:00pm</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="week-block">
+          <p class="week-label">17 &amp; 18 May</p>
+          <div class="day-block">
+            <p class="day-name">Saturday 17 May</p>
+            <div class="slots-row">
+              <button class="slot" onclick="selectSlot(this,'Saturday 17 May, 9:00am')">9:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Saturday 17 May, 11:00am')">11:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Saturday 17 May, 1:00pm')">1:00pm</button>
+            </div>
+          </div>
+          <div class="day-block" style="margin-top:1.2rem;">
+            <p class="day-name">Sunday 18 May</p>
+            <div class="slots-row">
+              <button class="slot" onclick="selectSlot(this,'Sunday 18 May, 9:00am')">9:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Sunday 18 May, 11:00am')">11:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Sunday 18 May, 1:00pm')">1:00pm</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="week-block">
+          <p class="week-label">24 &amp; 25 May</p>
+          <div class="day-block">
+            <p class="day-name">Saturday 24 May</p>
+            <div class="slots-row">
+              <button class="slot" onclick="selectSlot(this,'Saturday 24 May, 9:00am')">9:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Saturday 24 May, 11:00am')">11:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Saturday 24 May, 1:00pm')">1:00pm</button>
+            </div>
+          </div>
+          <div class="day-block" style="margin-top:1.2rem;">
+            <p class="day-name">Sunday 25 May</p>
+            <div class="slots-row">
+              <button class="slot" onclick="selectSlot(this,'Sunday 25 May, 9:00am')">9:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Sunday 25 May, 11:00am')">11:00am</button>
+              <button class="slot" onclick="selectSlot(this,'Sunday 25 May, 1:00pm')">1:00pm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sel-summary" id="selSummary">
+        <p class="ss-lbl">Your chosen slot</p>
+        <p class="ss-val" id="selText">—</p>
+      </div>
+
+      <a class="book-btn" id="bookBtn" href="https://buy.stripe.com/dRm8wQ7EwbCP4dH4Jo4Rq03" target="_blank">Secure this slot — Pay £133</a>
+
+      <div class="or-div">or</div>
+      <a href="https://wa.me/447393201088?text=SOULMIRROR" class="wa-btn" id="waBtn">Message SOULMIRROR on WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT HAPPENS NEXT -->
+<section class="section next-sec">
+  <div class="container">
+    <div class="reveal">
+      <p class="lbl">After You Book</p>
+      <h2 class="sec-head" style="font-size:clamp(2rem,4.5vw,3.2rem);">What happens<br><em>next</em></h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <h3 class="step-title">You pay &amp; secure</h3>
+        <p class="step-desc">Your £133 payment secures your chosen slot. You receive a Stripe confirmation immediately.</p>
+      </div>
+      <div class="step reveal reveal-d1">
+        <div class="step-num">02</div>
+        <h3 class="step-title">Ny confirms</h3>
+        <p class="step-desc">Ny messages you on WhatsApp within 24 hours to confirm your time and everything you need.</p>
+      </div>
+      <div class="step reveal reveal-d2">
+        <div class="step-num">03</div>
+        <h3 class="step-title">You arrive</h3>
+        <p class="step-desc">Come with an open heart, a quiet space, and a willingness to receive. The session begins.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section faq-sec">
+  <div class="container">
+    <div class="reveal">
+      <p class="lbl">Common Questions</p>
+      <h2 class="sec-head" style="font-size:clamp(2rem,4.5vw,3.2rem);">Before you<br><em>begin</em></h2>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">I have never done anything like this before — is that okay?<span class="faq-icon">+</span></button>
+        <div class="faq-a"><p class="faq-a-inner">More than okay. Most people who book a Soul Mirror session have never done anything like it. You do not need any experience, any spiritual practice, or any preparation. You simply need to come as you are and be willing to be honest. Ny meets you exactly where you are.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What if I get emotional during the session?<span class="faq-icon">+</span></button>
+        <div class="faq-a"><p class="faq-a-inner">Getting emotional is not something going wrong — it is often the sign that something is finally moving. People have become emotional from a single question and left feeling lighter than they have in years. Ny holds the space with complete calm. You are completely safe to feel whatever comes.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Can I reschedule if something comes up?<span class="faq-icon">+</span></button>
+        <div class="faq-a"><p class="faq-a-inner">Yes. If something genuine comes up message Ny on WhatsApp as soon as you know and he will work with you to find another slot. Please give as much notice as possible — the slot you held was kept available for you.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How is this different from the Wave challenge?<span class="faq-icon">+</span></button>
+        <div class="faq-a"><p class="faq-a-inner">The Wave is a 7-day group reset — body-based, community-supported, fasting-led. The Soul Mirror is a private 1:1 — intuitive, soul-level, entirely personal to you. Some people do the Wave first and come to the Soul Mirror ready to go deeper. Some come to the Soul Mirror first. Both paths are valid.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What do I actually need to do to prepare?<span class="faq-icon">+</span></button>
+        <div class="faq-a"><p class="faq-a-inner">Find a quiet space where you will not be disturbed. Bring water. A journal if you want to capture what comes. You do not need to prepare what to say or have a list of things to discuss. Come with an open heart and a willingness to receive. That is everything.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAVE LINK -->
+<div class="section wave-sec">
+  <div class="reveal">
+    <p class="wave-text">Not ready for a 1:1 yet?<br>The Wave challenge is free and begins 20th April.</p>
+    <a href="https://nystro.co.uk#join" class="wave-link">Join the free reset →</a>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-brand">Nystro</span>
+  <div class="footer-links">
+    <a href="https://nystro.co.uk">The Reset</a>
+    <a href="https://nystro.co.uk#join">Join the Wave</a>
+    <a href="https://instagram.com/_nystro">Instagram</a>
+    <a href="https://youtube.com/@nystro1">YouTube</a>
+    <a href="https://wa.me/447393201088?text=RESET">WhatsApp</a>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const c=document.getElementById('particles');
+  for(let i=0;i<28;i++){
+    const p=document.createElement('div');p.className='particle';
+    const l=Math.random()*100,delay=Math.random()*20,dur=18+Math.random()*22,dx=(Math.random()-.5)*120,sz=Math.random()>.7?2:1;
+    p.style.cssText=`left:${l}%;bottom:-10px;width:${sz}px;height:${sz}px;animation-delay:${delay}s;animation-duration:${dur}s;--dx:${dx}px;`;
+    c.appendChild(p);
+  }
+})();
+
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.08,rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+function openCalendar(){
+  const cal=document.getElementById('calWrap');
+  cal.classList.add('open');
+  setTimeout(()=>cal.scrollIntoView({behavior:'smooth',block:'start'}),150);
+}
+
+function selectSlot(btn,label){
+  document.querySelectorAll('.slot:not(.taken)').forEach(s=>s.classList.remove('selected'));
+  btn.classList.add('selected');
+  const answer=document.getElementById('shiftQ').value.trim();
+  const waText=answer?`SOULMIRROR — Slot: ${label} — What I want to shift: ${answer}`:`SOULMIRROR — Slot: ${label}`;
+  document.getElementById('waBtn').href=`https://wa.me/447393201088?text=${encodeURIComponent(waText)}`;
+  const sum=document.getElementById('selSummary');
+  document.getElementById('selText').textContent=label;
+  sum.classList.add('show');
+  const bb=document.getElementById('bookBtn');
+  bb.classList.add('show');
+  setTimeout(()=>sum.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+function toggleFaq(btn){
+  const item=btn.closest('.faq-item');
+  const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
+  if(!isOpen)item.classList.add('open');
+}
+</script>
+</body>
+</html>
