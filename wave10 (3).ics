@@ -1,0 +1,36 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Nystro//Wave 10//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:wave10-nystro-2026@nystro.co.uk
+DTSTAMP:20260429T050000Z
+DTSTART;VALUE=DATE:20260518
+DTEND;VALUE=DATE:20260525
+SUMMARY:Wave 10 — Nystro Reset (Day 1)
+DESCRIPTION:Wave 10 begins. Seven days. Twelve hours. Dry.\n\nProtocol: 12-hour dry fasting window each day\, 12-hour eating window. Choose your own window.\n\nWhatsApp community: https://chat.whatsapp.com/GwYVx06qjg5EYo90lhtZ1Y\n\nDeeper support:\n- Reset Guide £20 — nystro.co.uk/reset-guide\n- Inner Circle £111 (10 places) — nystro.co.uk/inner-circle\n\nNy
+LOCATION:WhatsApp Community
+URL:https://chat.whatsapp.com/GwYVx06qjg5EYo90lhtZ1Y
+BEGIN:VALARM
+TRIGGER:-PT24H
+ACTION:DISPLAY
+DESCRIPTION:Wave 10 starts tomorrow — set your fasting window
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:Wave 10 begins in 1 hour
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:wave10-nystro-day-zero-2026@nystro.co.uk
+DTSTAMP:20260429T050000Z
+DTSTART;VALUE=DATE:20260517
+DTEND;VALUE=DATE:20260518
+SUMMARY:Wave 10 — Day Zero (Intention)
+DESCRIPTION:Day Zero. Set your intention. Prepare your body.\n\nWhatsApp community opens for approvals today.\n\nWave 10 begins tomorrow — Monday 18 May.\n\nNy
+LOCATION:WhatsApp Community
+URL:https://chat.whatsapp.com/GwYVx06qjg5EYo90lhtZ1Y
+END:VEVENT
+END:VCALENDAR
